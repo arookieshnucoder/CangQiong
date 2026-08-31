@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="001-01-create-address-book" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="address_book"/>
+            </not>
+        </preConditions>
+        <createTable tableName="address_book" remarks="地址簿">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT" remarks="用户id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="consignee" type="VARCHAR(50)" remarks="收货人"/>
+            <column name="sex" type="VARCHAR(2)" remarks="性别"/>
+            <column name="phone" type="VARCHAR(11)" remarks="手机号">
+                <constraints nullable="false"/>
+            </column>
+            <column name="province_code" type="VARCHAR(12)" remarks="省级区划编号"/>
+            <column name="province_name" type="VARCHAR(32)" remarks="省级名称"/>
+            <column name="city_code" type="VARCHAR(12)" remarks="市级区划编号"/>
+            <column name="city_name" type="VARCHAR(32)" remarks="市级名称"/>
+            <column name="district_code" type="VARCHAR(12)" remarks="区级区划编号"/>
+            <column name="district_name" type="VARCHAR(32)" remarks="区级名称"/>
+            <column name="detail" type="VARCHAR(200)" remarks="详细地址"/>
+            <column name="label" type="VARCHAR(100)" remarks="标签"/>
+            <column name="is_default" type="TINYINT(1)" defaultValueNumeric="0" remarks="默认 0否 1是">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-02-create-category" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="category"/>
+            </not>
+        </preConditions>
+        <createTable tableName="category" remarks="菜品及套餐分类">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="type" type="INT" remarks="类型 1菜品分类 2套餐分类"/>
+            <column name="name" type="VARCHAR(32)" remarks="分类名称">
+                <constraints nullable="false" unique="true" uniqueConstraintName="idx_category_name"/>
+            </column>
+            <column name="sort" type="INT" defaultValueNumeric="0" remarks="顺序">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT" remarks="分类状态 0禁用 1启用"/>
+            <column name="create_time" type="DATETIME" remarks="创建时间"/>
+            <column name="update_time" type="DATETIME" remarks="更新时间"/>
+            <column name="create_user" type="BIGINT" remarks="创建人"/>
+            <column name="update_user" type="BIGINT" remarks="修改人"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-03-create-dish" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="dish"/>
+            </not>
+        </preConditions>
+        <createTable tableName="dish" remarks="菜品">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(32)" remarks="菜品名称">
+                <constraints nullable="false" unique="true" uniqueConstraintName="idx_dish_name"/>
+            </column>
+            <column name="category_id" type="BIGINT" remarks="菜品分类id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL(10,2)" remarks="菜品价格"/>
+            <column name="image" type="VARCHAR(255)" remarks="图片"/>
+            <column name="description" type="VARCHAR(255)" remarks="描述信息"/>
+            <column name="status" type="INT" defaultValueNumeric="1" remarks="0停售 1起售"/>
+            <column name="create_time" type="DATETIME" remarks="创建时间"/>
+            <column name="update_time" type="DATETIME" remarks="更新时间"/>
+            <column name="create_user" type="BIGINT" remarks="创建人"/>
+            <column name="update_user" type="BIGINT" remarks="修改人"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-04-create-dish-flavor" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="dish_flavor"/>
+            </not>
+        </preConditions>
+        <createTable tableName="dish_flavor" remarks="菜品口味关系表">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="dish_id" type="BIGINT" remarks="菜品">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(32)" remarks="口味名称"/>
+            <column name="value" type="VARCHAR(255)" remarks="口味数据list"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-05-create-employee" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="employee"/>
+            </not>
+        </preConditions>
+        <createTable tableName="employee" remarks="员工信息">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(32)" remarks="姓名">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(32)" remarks="用户名">
+                <constraints nullable="false" unique="true" uniqueConstraintName="idx_username"/>
+            </column>
+            <column name="password" type="VARCHAR(64)" remarks="密码">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(11)" remarks="手机号">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sex" type="VARCHAR(2)" remarks="性别">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_number" type="VARCHAR(18)" remarks="身份证号">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT" defaultValueNumeric="1" remarks="状态 0禁用 1启用">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_time" type="DATETIME" remarks="创建时间"/>
+            <column name="update_time" type="DATETIME" remarks="更新时间"/>
+            <column name="create_user" type="BIGINT" remarks="创建人"/>
+            <column name="update_user" type="BIGINT" remarks="修改人"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-06-create-order-detail" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="order_detail"/>
+            </not>
+        </preConditions>
+        <createTable tableName="order_detail" remarks="订单明细表">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(32)" remarks="名字"/>
+            <column name="image" type="VARCHAR(255)" remarks="图片"/>
+            <column name="order_id" type="BIGINT" remarks="订单id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dish_id" type="BIGINT" remarks="菜品id"/>
+            <column name="setmeal_id" type="BIGINT" remarks="套餐id"/>
+            <column name="dish_flavor" type="VARCHAR(50)" remarks="口味"/>
+            <column name="number" type="INT" defaultValueNumeric="1" remarks="数量">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(10,2)" remarks="金额">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-07-create-orders" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="orders"/>
+            </not>
+        </preConditions>
+        <createTable tableName="orders" remarks="订单表">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="number" type="VARCHAR(50)" remarks="订单号"/>
+            <column name="status" type="INT" defaultValueNumeric="1" remarks="订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消 7退款">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT" remarks="下单用户">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address_book_id" type="BIGINT" remarks="地址id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_time" type="DATETIME" remarks="下单时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="checkout_time" type="DATETIME" remarks="结账时间"/>
+            <column name="pay_method" type="INT" defaultValueNumeric="1" remarks="支付方式 1微信 2支付宝">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pay_status" type="TINYINT" defaultValueNumeric="0" remarks="支付状态 0未支付 1已支付 2退款">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(10,2)" remarks="实收金额">
+                <constraints nullable="false"/>
+            </column>
+            <column name="remark" type="VARCHAR(100)" remarks="备注"/>
+            <column name="phone" type="VARCHAR(11)" remarks="手机号"/>
+            <column name="address" type="VARCHAR(255)" remarks="地址"/>
+            <column name="user_name" type="VARCHAR(32)" remarks="用户名称"/>
+            <column name="consignee" type="VARCHAR(32)" remarks="收货人"/>
+            <column name="cancel_reason" type="VARCHAR(255)" remarks="订单取消原因"/>
+            <column name="rejection_reason" type="VARCHAR(255)" remarks="订单拒绝原因"/>
+            <column name="cancel_time" type="DATETIME" remarks="订单取消时间"/>
+            <column name="estimated_delivery_time" type="DATETIME" remarks="预计送达时间"/>
+            <column name="delivery_status" type="TINYINT(1)" defaultValueNumeric="1" remarks="配送状态 1立即送出 0选择具体时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="delivery_time" type="DATETIME" remarks="送达时间"/>
+            <column name="pack_amount" type="INT" remarks="打包费"/>
+            <column name="tableware_number" type="INT" remarks="餐具数量"/>
+            <column name="tableware_status" type="TINYINT(1)" defaultValueNumeric="1" remarks="餐具数量状态 1按餐量提供 0选择具体数量">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-08-create-setmeal" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="setmeal"/>
+            </not>
+        </preConditions>
+        <createTable tableName="setmeal" remarks="套餐">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT" remarks="菜品分类id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(32)" remarks="套餐名称">
+                <constraints nullable="false" unique="true" uniqueConstraintName="idx_setmeal_name"/>
+            </column>
+            <column name="price" type="DECIMAL(10,2)" remarks="套餐价格">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT" defaultValueNumeric="1" remarks="售卖状态 0停售 1起售"/>
+            <column name="description" type="VARCHAR(255)" remarks="描述信息"/>
+            <column name="image" type="VARCHAR(255)" remarks="图片"/>
+            <column name="create_time" type="DATETIME" remarks="创建时间"/>
+            <column name="update_time" type="DATETIME" remarks="更新时间"/>
+            <column name="create_user" type="BIGINT" remarks="创建人"/>
+            <column name="update_user" type="BIGINT" remarks="修改人"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-09-create-setmeal-dish" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="setmeal_dish"/>
+            </not>
+        </preConditions>
+        <createTable tableName="setmeal_dish" remarks="套餐菜品关系">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="setmeal_id" type="BIGINT" remarks="套餐id"/>
+            <column name="dish_id" type="BIGINT" remarks="菜品id"/>
+            <column name="name" type="VARCHAR(32)" remarks="菜品名称（冗余字段）"/>
+            <column name="price" type="DECIMAL(10,2)" remarks="菜品单价（冗余字段）"/>
+            <column name="copies" type="INT" remarks="菜品份数"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-10-create-shopping-cart" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="shopping_cart"/>
+            </not>
+        </preConditions>
+        <createTable tableName="shopping_cart" remarks="购物车">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(32)" remarks="商品名称"/>
+            <column name="image" type="VARCHAR(255)" remarks="图片"/>
+            <column name="user_id" type="BIGINT" remarks="用户id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dish_id" type="BIGINT" remarks="菜品id"/>
+            <column name="setmeal_id" type="BIGINT" remarks="套餐id"/>
+            <column name="dish_flavor" type="VARCHAR(50)" remarks="口味"/>
+            <column name="number" type="INT" defaultValueNumeric="1" remarks="数量">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(10,2)" remarks="金额">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_time" type="DATETIME" remarks="创建时间"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-11-create-user" author="sky">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user" remarks="用户信息">
+            <column name="id" type="BIGINT" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="openid" type="VARCHAR(45)" remarks="微信用户唯一标识"/>
+            <column name="name" type="VARCHAR(32)" remarks="姓名"/>
+            <column name="phone" type="VARCHAR(11)" remarks="手机号"/>
+            <column name="sex" type="VARCHAR(2)" remarks="性别"/>
+            <column name="id_number" type="VARCHAR(18)" remarks="身份证号"/>
+            <column name="avatar" type="VARCHAR(500)" remarks="头像"/>
+            <column name="create_time" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

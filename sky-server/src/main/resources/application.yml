@@ -10,10 +10,12 @@ spring:
     allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver # 驱动名称
-    url: jdbc:mysql://localhost:3306/sky_take_out
-    username: root
-    password: sql_1
+    url: ${DB_URL:jdbc:mysql://localhost:3306/sky_take_out?createDatabaseIfNotExist=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
     type: com.alibaba.druid.pool.DruidDataSource
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
   data:
     redis:
       host: 127.0.0.1
